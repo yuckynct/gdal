@@ -1274,15 +1274,15 @@ func (feature Feature) SetFieldRaw(index int, field Field) {
 	C.OGR_F_SetFieldRaw(feature.cval, C.int(index), field.cval)
 }
 
-// Set field as binary data
-func (feature Feature) SetFieldBinary(index int, value []uint8) {
-	C.OGR_F_SetFieldBinary(
-		feature.cval,
-		C.int(index),
-		C.int(len(value)),
-		(*C.GByte)(unsafe.Pointer(&value[0])),
-	)
-}
+// // Set field as binary data
+// func (feature Feature) SetFieldBinary(index int, value []uint8) {
+// 	C.OGR_F_SetFieldBinary(
+// 		feature.cval,
+// 		C.int(index),
+// 		C.int(len(value)),
+// 		(*C.GByte)(unsafe.Pointer(&value[0])),
+// 	)
+// }
 
 // Set field as date / time
 func (feature Feature) SetFieldDateTime(index int, dt time.Time) {
