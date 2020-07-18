@@ -1,3 +1,3 @@
-module github.com/lukeroth/gdal
+module github.com/slawler/gdal
 
-go 1.13
+go 1.14
