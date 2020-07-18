@@ -1,3 +1,3 @@
-module github.com/slawler/gdal v0.1.1
+module gdal
 
 go 1.14
