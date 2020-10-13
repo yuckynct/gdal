@@ -1,3 +1,3 @@
-module github.com/albrazeau/gdal
+module github.com/slawler/gdal
 
 go 1.14
