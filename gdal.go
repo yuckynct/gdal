@@ -1847,3 +1847,14 @@ func VSIFReadL(nSize, nCount int, file VSILFILE) []byte {
 
 	return data
 }
+
+// Delete a file. This method goes through the VSIFileHandler virtualization and may work on unusual filesystems such as in memory.
+func VSIUnlink(fileName string) error {
+	cFileName := C.CString(fileName)
+	defer C.free(unsafe.Pointer(cFileName))
+	deleted := C.VSIUnlink(cFileName)
+	if deleted != 0 {
+		return fmt.Errorf("Error: VSILFILE '%s' unlink error", fileName)
+	}
+	return nil
+}
