@@ -1921,7 +1921,8 @@ func VSIFileFromMemBuffer(filename string, data []byte) VSILFILE {
 	defer C.free(unsafe.Pointer(pszFilename))
 
 	fp := C.VSIFileFromMemBuffer(pszFilename, (*C.GByte)(&data[0]), C.vsi_l_offset(len(data)), C.FALSE)
-	return VSILFILE(fp)
+	cval := *C.VSILFILE(fp)
+	return VSILFILE{cval}
 }
 
 // Fetch buffer underlying memory file.
