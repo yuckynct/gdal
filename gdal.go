@@ -1916,12 +1916,12 @@ func VSIRmdirRecursive(dir string) error {
 // A virtual memory file is created from the passed buffer with the indicated filename. Under normal conditions the filename would need to be absolute and within the /vsimem/ portion of the filesystem.
 //
 // The buffer remains the responsibility of the caller, and should not go out of scope as long as it might be accessed as a file. In no circumstances does this function take a copy of the data contents.
-func VSIFileFromMemBuffer(filename string, data []byte) VSILFile {
+func VSIFileFromMemBuffer(filename string, data []byte) VSILFILE {
 	pszFilename := C.CString(filename)
 	defer C.free(unsafe.Pointer(pszFilename))
 
 	fp := C.VSIFileFromMemBuffer(pszFilename, (*C.GByte)(&data[0]), C.vsi_l_offset(len(data)), C.FALSE)
-	return VSILFile(fp)
+	return VSILFILE(fp)
 }
 
 // Fetch buffer underlying memory file.
