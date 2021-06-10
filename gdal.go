@@ -1910,3 +1910,52 @@ func VSIRmdirRecursive(dir string) error {
 	}
 	return nil
 }
+
+// Create memory "file" from a buffer.
+//
+// A virtual memory file is created from the passed buffer with the indicated filename. Under normal conditions the filename would need to be absolute and within the /vsimem/ portion of the filesystem.
+//
+// The buffer remains the responsibility of the caller, and should not go out of scope as long as it might be accessed as a file. In no circumstances does this function take a copy of the data contents.
+func VSIFileFromMemBuffer(filename string, data []byte) VSILFile {
+	pszFilename := C.CString(filename)
+	defer C.free(unsafe.Pointer(pszFilename))
+
+	fp := C.VSIFileFromMemBuffer(pszFilename, (*C.GByte)(&data[0]), C.vsi_l_offset(len(data)), C.FALSE)
+	return VSILFile(fp)
+}
+
+// Fetch buffer underlying memory file.
+//
+// This function returns a pointer to the memory buffer underlying a virtual "in memory" file. If bUnlinkAndSeize is TRUE the filesystem object will be deleted, and ownership of the buffer will pass to the caller otherwise the underlying file will remain in existance.
+//
+// Parameters:
+//	pszFilename 	the name of the file to grab the buffer of.
+//	pnDataLength 	(file) length returned in this variable.
+//	bUnlinkAndSeize 	TRUE to remove the file, or FALSE to leave unaltered.
+//
+// Returns:
+//	pointer to memory buffer or NULL on failure.
+func VSIGetMemFileBuffer(filename string, unlinkAndSeize bool) []byte {
+	pszFilename := C.CString(filename)
+	defer C.free(unsafe.Pointer(pszFilename))
+
+	var bUnlinkAndSeize C.int
+	if unlinkAndSeize {
+		bUnlinkAndSeize = C.TRUE
+	} else {
+		bUnlinkAndSeize = C.FALSE
+	}
+
+	var pnDataLength C.vsi_l_offset
+	pabyData := C.VSIGetMemFileBuffer(pszFilename, &pnDataLength, bUnlinkAndSeize)
+	if pabyData == nil {
+		return nil
+	}
+
+	data := C.GoBytes(unsafe.Pointer(pabyData), C.int(pnDataLength))
+	if unlinkAndSeize {
+		C.VSIFree(unsafe.Pointer(pabyData))
+	}
+
+	return data
+}
